@@ -6,9 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
    
-    <!-- import stylesheet -->
-    <link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css">
-    
+    <link rel="stylesheet" type="text/css" href="http://unpkg.com/iview/dist/styles/iview.css">
+    <script type="text/javascript" src="http://vuejs.org/js/vue.min.js"></script>
+    <script type="text/javascript" src="http://unpkg.com/iview/dist/iview.min.js"></script>
     <style>
         body {
             text-align: center;
@@ -27,10 +27,14 @@
             width: 375px;
             position: absolute;
             opacity: 0.2;
-            position: absolute;
-            opacity: 0.2;
             top: 0;
             left: 0;
+        }
+        .control-box {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width:300px; 
         }
         .drop-wrap {
             position: absolute;
@@ -63,6 +67,14 @@
             拖拽屏幕截图
             <input style="display:none;" id="fileupload"  type="file" name="file" accept="image/*" multiple>
         </p>
+    </div>
+     <!-- 控制控件--> 
+    <div id="controlBox" class="control-box">
+        <p><h1>工具栏</h1></p>
+        <span><h2>透明度设置(max:100)</h2></span><Slider v-model="opacity"  show-input @on-change="change"></Slider>
+        <h2>移动（键盘上下左右 || 输入框）</h2>
+        <span><h3>偏移top</h3></span><input-number :max="750" :min="-750" @on-change="changTop" v-model="top"></input-number>
+        <span><h3>偏移left</h3></span> <input-number :max="750" :min="-750" @on-change="changLeft" v-model="left"></input-number> 
     </div>
 
 </body>
@@ -99,5 +111,50 @@
        return p;
     }
 
+    const imgB = document.querySelector(".img-b");
+    var Main = {
+        data() {
+            return {
+                opacity: 20,
+                left:0,
+                top:0
+            }
+        },
+        methods: {
+            change(value) {
+                imgB.style.opacity = value / 100;
+            },
+            changTop(value) {
+                imgB.style.top = value + "px"
+            },
+            changLeft(value) {
+                imgB.style.left = value + "px"
+            }
+        }
+    };
+
+    var Component = Vue.extend(Main);
+    new Component().$mount('#controlBox');
+    function getNum(num) {
+       num = parseInt(num);
+       return isNaN(num)?0:num;
+    }
+
+    document.onkeydown=function(event){
+        var e = event || window.event || arguments.callee.caller.arguments[0];
+        if (e && e.keyCode == 38) {
+            imgB.style.top = getNum(parseInt(imgB.style.top.replace("px",""))) - 1  + "px"
+        }
+        if(e && e.keyCode==37){//左
+            imgB.style.left = getNum(parseInt(imgB.style.left.replace("px",""))) - 1  + "px"
+        }
+
+        if(e && e.keyCode==40) {//下
+            imgB.style.top = getNum(parseInt(imgB.style.top.replace("px",""))) + 1  + "px"
+        } 
+        if(e && e.keyCode==39){//右
+            imgB.style.left = getNum(parseInt(imgB.style.left.replace("px",""))) + 1  + "px"
+        }
+    }
 </script>
 </html>
