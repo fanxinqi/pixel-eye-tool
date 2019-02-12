@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+   
+    <!-- import stylesheet -->
+    <link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css">
+    
+    <style>
+        body {
+            text-align: center;
+        }
+        .img-box {
+            width: 375px;
+            padding: 0;
+            margin: auto;
+            position: relative;
+            text-align: center;
+        }
+        .img-a,.img-b {
+            width:375px;
+        }
+        .img-b {
+            width: 375px;
+            position: absolute;
+            opacity: 0.2;
+            position: absolute;
+            opacity: 0.2;
+            top: 0;
+            left: 0;
+        }
+        .drop-wrap {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+        }
+        .drop_area {
+            color: blue;
+            line-height: 200px;
+            height: 200px;
+            width: 200px;
+            border: 1px dashed blue;
+        }
+    </style>
+</head>
+<body>
+    <!-- 图片pk -->
+    <div class="img-box">
+        <img class="img-a" src="a.png" alt="">
+        <img class="img-b" src="b.png" alt="">
+    </div>
+
+    <!-- 拖拽控件--> 
+    <div class="drop-wrap"> 
+        <p id="drop_area" class="drop_area" data-name="img-a">
+            拖拽设计稿
+        <input style="display:none;" id="fileupload"  type="file" name="file" accept="image/*" multiple>
+        </p>
+        <p id="drop_area" class="drop_area" data-name="img-b">
+            拖拽屏幕截图
+            <input style="display:none;" id="fileupload"  type="file" name="file" accept="image/*" multiple>
+        </p>
+    </div>
+
+</body>
+<script>  
+    var dps = document.querySelectorAll('.drop_area');
+    dps.forEach((dp) => {
+            dp.addEventListener('dragover', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+        });
+        dp.addEventListener("drop", function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            var file = e.dataTransfer.files[0];
+            // do something upload
+            readImg(file).then((source) => {
+                let imgclassName = e.target.getAttribute("data-name");
+                let imgDom = document.querySelector("." + imgclassName);
+                imgDom.setAttribute("src",source)
+            });
+        });
+    });
+    
+
+    function readImg(file) {
+        let p = new Promise((resolve,reject)=>{
+            let fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+            fileReader.onload = function (ev) {  
+                resolve(fileReader.result);
+            }
+        }); 
+       return p;
+    }
+
+</script>
+</html>
